@@ -10,7 +10,7 @@ import java.util.List;
 
 @Component
 public class Mapping {
-    @Autowired
+    @Autowired  
     private ModelMapper modelMapper;
 
     //mapping

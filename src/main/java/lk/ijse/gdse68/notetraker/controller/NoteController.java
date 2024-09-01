@@ -4,6 +4,7 @@ import lk.ijse.gdse68.notetraker.dto.NoteDTO;
 import lk.ijse.gdse68.notetraker.service.NoteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,11 +34,19 @@ public class NoteController {
         return noteService.getSelectedNote(noteId);
     }
     @PatchMapping(value = "/{noteId}",produces = MediaType.APPLICATION_JSON_VALUE)
-    public void updateNote(@PathVariable ("noteId") String noteId, @RequestBody NoteDTO note) {
-        noteService.updateNote(noteId, note);
+    public ResponseEntity<String> updateNote(@PathVariable ("noteId") String noteId, @RequestBody NoteDTO noteDTO) {
+        if (noteService.updateNote(noteId, noteDTO)) {
+            return ResponseEntity.ok("Note Update Successfully");
+        } else {
+            return new ResponseEntity<>("Note Update Faild", HttpStatus.BAD_REQUEST);
+        }
     }
     @DeleteMapping(value ="/{noteId}" )
-    public void deleteNote(@PathVariable ("noteId") String noteId) {
-        noteService.deleteNote(noteId);
+    public ResponseEntity<String> deleteNote(@PathVariable ("noteId") String noteId) {
+        if (noteService.deleteNote(noteId)) {
+            return  ResponseEntity.ok("Note Deleted Successfully!");
+        } else {
+            return new ResponseEntity<>("Note Deleted Faild!",HttpStatus.BAD_REQUEST);
+        }
     }
 }
