@@ -19,7 +19,7 @@ public class NoteController {
     private final NoteService noteService;
     //Todo: CRUD of the note
 
-    @GetMapping("health")
+    @GetMapping("/health")
     public String healthChecker() {
         return "Note Tracker is running!";
     }
