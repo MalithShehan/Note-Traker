@@ -8,5 +8,7 @@ public class AppUtil {
         return "NOTE "+UUID.randomUUID();
     }
 
-
+    public static String createUserId(){
+        return "USER-"+UUID.randomUUID();
+    }
 }
