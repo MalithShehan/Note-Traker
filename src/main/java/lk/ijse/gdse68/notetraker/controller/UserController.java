@@ -43,4 +43,17 @@ public class UserController {
         return new ResponseEntity<>(userService.saveUser(buldUserDTO), HttpStatus.CREATED);
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteUser(@PathVariable ("id") String userId) {
+//        return userService.deleteUser(userId) ?
+//                new ResponseEntity<>(HttpStatus.NO_CONTENT)     :
+//                new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        if (userService.deleteUser(userId)) {
+            return ResponseEntity.ok("User Deleted Successfully!");
+        } else {
+            return new ResponseEntity<>("Note Deleted Faild!", HttpStatus.BAD_REQUEST);
+        }
+    }
+
 }
