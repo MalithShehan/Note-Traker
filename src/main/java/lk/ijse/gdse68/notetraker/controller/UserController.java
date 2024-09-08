@@ -8,15 +8,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("api/v1/users")
 @RequiredArgsConstructor
 public class UserController {
+    @GetMapping("health")
+    public String healthCheck() {
+        return "User controller is OK!";
+    }
     @Autowired
     private final UserService userService;
 
@@ -29,18 +30,17 @@ public class UserController {
             @RequestPart ("profilePic") String profilePic) {
 
         // Handle profile pic
-        String base64ProfilePic = AppUtil.toBase64ProfilePic(profilePic);
+        var base64ProfilePic = AppUtil.toBase64ProfilePic(profilePic);
         // build the user object
-        var buildUserDTO = new UserDTO();
         UserDTO buldUserDTO = new UserDTO();
-        buildUserDTO.setFirstName(firstName);
-        buildUserDTO.setLastName(lastName);
-        buildUserDTO.setEmail(email);
-        buildUserDTO.setPassword(password);
-        buildUserDTO.setProfilePic(base64ProfilePic);
+        buldUserDTO.setFirstName(firstName);
+        buldUserDTO.setLastName(lastName);
+        buldUserDTO.setEmail(email);
+        buldUserDTO.setPassword(password);
+        buldUserDTO.setProfilePic(base64ProfilePic);
 
         //send to the service layer
-        return new ResponseEntity<>(userService.saveUser(buildUserDTO), HttpStatus.CREATED);
+        return new ResponseEntity<>(userService.saveUser(buldUserDTO), HttpStatus.CREATED);
     }
 
 }
