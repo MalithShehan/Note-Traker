@@ -68,4 +68,13 @@ public class UserController {
     public List<UserDTO> getAllUsers() {
         return userService.getAllUsers();
     }
+
+    @PatchMapping(value = "/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> updateUser(@PathVariable ("userId") String userId, @RequestBody UserDTO userDTO) {
+        if(userService.updateUser(userId, userDTO)) {
+            return ResponseEntity.ok("User Update Successfully!");
+        } else {
+            return new ResponseEntity<>("Note Update faild!", HttpStatus.BAD_REQUEST);
+        }
+    }
 }
