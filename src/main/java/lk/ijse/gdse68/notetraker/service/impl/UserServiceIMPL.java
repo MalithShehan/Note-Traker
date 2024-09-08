@@ -33,8 +33,8 @@ public class UserServiceIMPL implements UserService {
     }
 
     @Override
-    public boolean updateUser(String userId, UserDTO userDTO)  {
-        Optional<UserEntity> tmpUserEntity = userDao.findById(userId);
+    public boolean updateUser( UserDTO userDTO)  {
+        Optional<UserEntity> tmpUserEntity = userDao.findById(userDTO.getUserId());
         if (!tmpUserEntity.isPresent()) {
             return false;
         } else {

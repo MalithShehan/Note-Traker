@@ -71,10 +71,33 @@ public class UserController {
 
     @PatchMapping(value = "/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> updateUser(@PathVariable ("userId") String userId, @RequestBody UserDTO userDTO) {
-        if(userService.updateUser(userId, userDTO)) {
+        userDTO.setUserId(userId);
+        if(userService.updateUser( userDTO)) {
             return ResponseEntity.ok("User Update Successfully!");
         } else {
             return new ResponseEntity<>("Note Update faild!", HttpStatus.BAD_REQUEST);
         }
+    }
+    @PatchMapping(value = "/{userId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> updateUser(
+            @RequestPart("firstName") String firstName,
+            @RequestPart("lastName") String lastName,
+            @RequestPart("email") String email,
+            @RequestPart("password") String password,
+            @RequestPart("profilePic") String profilePic,
+            @PathVariable("userId") String userId
+    ) {
+        var base64ProfilePic = AppUtil.toBase64ProfilePic(profilePic);
+        UserDTO buildUserDto = new UserDTO();
+        buildUserDto.setUserId(userId);
+        buildUserDto.setFirstName(firstName);
+        buildUserDto.setLastName(lastName);
+        buildUserDto.setEmail(email);
+        buildUserDto.setPassword(password);
+        buildUserDto.setProfilePic(base64ProfilePic);
+
+        return new ResponseEntity<>(
+                userService.updateUser(buildUserDto)
+                        ? "User Updated Successfully" : "User Update Failed", HttpStatus.OK);
     }
 }
