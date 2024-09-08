@@ -31,7 +31,7 @@ public class Mapping {
     public UserEntity convertToUserEntity(UserDTO userDTO) {
         return modelMapper.map(userDTO, UserEntity.class);
     }
-    public UserDTO convertToUserDTO(UserEntity userEntity) {
+    public UserDTO convertToUserDTOList(UserEntity userEntity) {
         return modelMapper.map(userEntity, UserDTO.class);
     }
     public List<UserDTO> convertUserToDTO(List<UserEntity> userEntities) {

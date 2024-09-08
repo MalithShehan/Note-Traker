@@ -49,11 +49,11 @@ public class UserServiceIMPL implements UserService {
     @Override
     public UserDTO getSelectedUser(String userId) {
         UserEntity userEntityByUserId = userDao.getUserEntityByUserId(userId);
-        return mapping.convertToUserDTO(userEntityByUserId);
+        return mapping.convertToUserDTOList(userEntityByUserId);
     }
 
     @Override
     public List<UserDTO> getAllUsers() {
-        return null;
+        return mapping.convertUserToDTO(userDao.findAll());
     }
 }
