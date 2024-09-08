@@ -2,6 +2,7 @@ package lk.ijse.gdse68.notetraker.service.impl;
 
 import lk.ijse.gdse68.notetraker.dao.UserDao;
 import lk.ijse.gdse68.notetraker.dto.UserDTO;
+import lk.ijse.gdse68.notetraker.entity.UserEntity;
 import lk.ijse.gdse68.notetraker.service.UserService;
 import lk.ijse.gdse68.notetraker.util.AppUtil;
 import lk.ijse.gdse68.notetraker.util.Mapping;
@@ -47,7 +48,8 @@ public class UserServiceIMPL implements UserService {
 
     @Override
     public UserDTO getSelectedUser(String userId) {
-        return null;
+        UserEntity userEntityByUserId = userDao.getUserEntityByUserId(userId);
+        return mapping.convertToUserDTO(userEntityByUserId);
     }
 
     @Override

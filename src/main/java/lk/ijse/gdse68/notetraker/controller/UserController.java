@@ -55,5 +55,8 @@ public class UserController {
             return new ResponseEntity<>("Note Deleted Faild!", HttpStatus.BAD_REQUEST);
         }
     }
-
+    @GetMapping(value = "/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
+    public UserDTO getSelectedUser(@PathVariable ("id") String userId) {
+        return userService.getSelectedUser(userId);
+    }
 }
