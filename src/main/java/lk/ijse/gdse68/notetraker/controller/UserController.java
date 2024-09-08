@@ -1,8 +1,7 @@
 package lk.ijse.gdse68.notetraker.controller;
 
-import lk.ijse.gdse68.notetraker.dao.UserDao;
 import lk.ijse.gdse68.notetraker.dto.UserDTO;
-import lk.ijse.gdse68.notetraker.entity.UserEntity;
+import lk.ijse.gdse68.notetraker.exseption.UserNotFoundException;
 import lk.ijse.gdse68.notetraker.service.UserService;
 import lk.ijse.gdse68.notetraker.util.AppUtil;
 import lombok.RequiredArgsConstructor;
@@ -13,18 +12,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
 @RestController
 @RequestMapping("api/v1/users")
 @RequiredArgsConstructor
 public class UserController {
-    @GetMapping("health")
-    public String healthCheck() {
-        return "User controller is OK!";
-    }
     @Autowired
     private final UserService userService;
-
+    //Save User
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> saveUser(
             @RequestPart("firstName") String firstName,
@@ -32,72 +26,66 @@ public class UserController {
             @RequestPart ("email") String email,
             @RequestPart ("password") String password,
             @RequestPart ("profilePic") String profilePic) {
-
         // Handle profile pic
-        var base64ProfilePic = AppUtil.toBase64ProfilePic(profilePic);
+        String base64ProfilePic = AppUtil.toBase64ProfilePic(profilePic);
         // build the user object
-        UserDTO buldUserDTO = new UserDTO();
-        buldUserDTO.setFirstName(firstName);
-        buldUserDTO.setLastName(lastName);
-        buldUserDTO.setEmail(email);
-        buldUserDTO.setPassword(password);
-        buldUserDTO.setProfilePic(base64ProfilePic);
-
+        UserDTO buildUserDTO = new UserDTO();
+        buildUserDTO.setFirstName(firstName);
+        buildUserDTO.setLastName(lastName);
+        buildUserDTO.setEmail(email);
+        buildUserDTO.setPassword(password);
+        buildUserDTO.setProfilePic(base64ProfilePic);
         //send to the service layer
-        return new ResponseEntity<>(userService.saveUser(buldUserDTO), HttpStatus.CREATED);
+        var saveStatus = userService.saveUser(buildUserDTO);
+        if (saveStatus.contains("User saved successfully")){
+            return new ResponseEntity<>(HttpStatus.CREATED);
+        }else {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
-
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteUser(@PathVariable ("id") String userId) {
-//        return userService.deleteUser(userId) ?
-//                new ResponseEntity<>(HttpStatus.NO_CONTENT)     :
-//                new ResponseEntity<>(HttpStatus.NOT_FOUND);
-
-        if (userService.deleteUser(userId)) {
-            return ResponseEntity.ok("User Deleted Successfully!");
-        } else {
-            return new ResponseEntity<>("Note Deleted Faild!", HttpStatus.BAD_REQUEST);
+    public ResponseEntity<Void> deleteUser(@PathVariable ("id") String userId) {
+        try {
+            userService.deleteUser(userId);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (UserNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
     @GetMapping(value = "/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
-    public UserDTO getSelectedUser(@PathVariable ("id") String userId) {
+    public UserDTO getSelectedUser(@PathVariable ("id") String userId){
         return userService.getSelectedUser(userId);
     }
-
-    @GetMapping(value = "allUsers", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<UserDTO> getAllUsers() {
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<UserDTO> getAllUsers(){
         return userService.getAllUsers();
     }
-
-    @PatchMapping(value = "/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> updateUser(@PathVariable ("userId") String userId, @RequestBody UserDTO userDTO) {
-        userDTO.setUserId(userId);
-        if(userService.updateUser( userDTO)) {
-            return ResponseEntity.ok("User Update Successfully!");
-        } else {
-            return new ResponseEntity<>("Note Update faild!", HttpStatus.BAD_REQUEST);
+    @PatchMapping(value = "/{id}",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Void> updateUser(
+            @PathVariable ("id") String id,
+            @RequestPart("updateFirstName") String updateFirstName,
+            @RequestPart ("updateLastName") String updateLastName,
+            @RequestPart ("updateEmail") String updateEmail,
+            @RequestPart ("updatePassword") String updatePassword,
+            @RequestPart ("updateProfilePic") String updateProfilePic
+    ){
+        try {
+            String updateBase64ProfilePic = AppUtil.toBase64ProfilePic(updateProfilePic);
+            var updateUser = new UserDTO();
+            updateUser.setUserId(id);
+            updateUser.setFirstName(updateFirstName);
+            updateUser.setLastName(updateLastName);
+            updateUser.setPassword(updatePassword);
+            updateUser.setEmail(updateEmail);
+            updateUser.setProfilePic(updateBase64ProfilePic);
+            userService.updateUser(updateUser);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }catch (UserNotFoundException e){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-    }
-    @PatchMapping(value = "/{userId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<String> updateUser(
-            @RequestPart("firstName") String firstName,
-            @RequestPart("lastName") String lastName,
-            @RequestPart("email") String email,
-            @RequestPart("password") String password,
-            @RequestPart("profilePic") String profilePic,
-            @PathVariable("userId") String userId
-    ) {
-        var base64ProfilePic = AppUtil.toBase64ProfilePic(profilePic);
-        UserDTO buildUserDto = new UserDTO();
-        buildUserDto.setUserId(userId);
-        buildUserDto.setFirstName(firstName);
-        buildUserDto.setLastName(lastName);
-        buildUserDto.setEmail(email);
-        buildUserDto.setPassword(password);
-        buildUserDto.setProfilePic(base64ProfilePic);
-
-        return new ResponseEntity<>(
-                userService.updateUser(buildUserDto)
-                        ? "User Updated Successfully" : "User Update Failed", HttpStatus.OK);
     }
 }
