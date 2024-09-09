@@ -1,6 +1,6 @@
 package lk.ijse.gdse68.notetraker.controller;
 
-import lk.ijse.gdse68.notetraker.dto.NoteDTO;
+import lk.ijse.gdse68.notetraker.dto.impl.NoteDTO;
 import lk.ijse.gdse68.notetraker.service.NoteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

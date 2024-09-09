@@ -1,5 +1,7 @@
-package lk.ijse.gdse68.notetraker.dto;
+package lk.ijse.gdse68.notetraker.dto.impl;
 
+import lk.ijse.gdse68.notetraker.customerObject.UserResponse;
+import lk.ijse.gdse68.notetraker.dto.SuperDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,7 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class UserDTO implements Serializable {
+public class UserDTO implements SuperDTO, UserResponse {
     private String userId;
     private String firstName;
     private String lastName;

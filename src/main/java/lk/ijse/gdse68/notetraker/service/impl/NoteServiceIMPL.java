@@ -1,7 +1,7 @@
 package lk.ijse.gdse68.notetraker.service.impl;
 
 import lk.ijse.gdse68.notetraker.dao.NoteDao;
-import lk.ijse.gdse68.notetraker.dto.NoteDTO;
+import lk.ijse.gdse68.notetraker.dto.impl.NoteDTO;
 
 import lk.ijse.gdse68.notetraker.entity.NoteEntity;
 import lk.ijse.gdse68.notetraker.service.NoteService;
